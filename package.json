@@ -9,10 +9,19 @@
     "format": "prettier --write '**/*.{ts,js,css,json,md}'",
     "test:clean": "rimraf ./transpiled/src ./transpiled/test",
     "test": "npm run test:clean && npm run transpile && mocha --require source-map-support/register --recursive transpiled/test",
-    "transpile": "tsc --project ./test"
+    "transpile": "tsc --project ./test",
+    "static:build": "parcel build ./static/index.html ./static/success.html -d public",
+    "static:dev": "parcel ./static/index.html ./static/success.html"
   },
   "author": "author",
   "license": "MIT OR Apache-2.0",
+  "dependencies": {
+    "cssnano": "^4.1.10",
+    "parcel-bundler": "^1.12.4",
+    "parcel-plugin-inliner": "^1.0.14",
+    "posthtml": "^0.14.0",
+    "sass": "^1.29.0"
+  },
   "devDependencies": {
     "@cloudflare/workers-types": "^2.0.0",
     "@types/chai": "^4.2.11",
