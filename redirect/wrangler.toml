@@ -1,0 +1,11 @@
+name = "redirect"
+type = "webpack"
+account_id = "7b927287c5596699f55d11da9d00383d"
+workers_dev = true
+route = ""
+zone_id = "f18f76ae585c58dbfbb36c14067a3a92"
+webpack_config = "webpack.config.js"
+kv_namespaces = [
+  { binding = "REDIRECTS", id = "c6709d49e8434b81b8e8582f1a77154a", preview_id = "c6709d49e8434b81b8e8582f1a77154a" },
+  { binding = "STATIC", id = "ac3fd7f2e2c34d6aa4f4ae89bc881807", preview_id = "ac3fd7f2e2c34d6aa4f4ae89bc881807" }
+]
