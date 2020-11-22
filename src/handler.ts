@@ -16,29 +16,13 @@ export async function handleRequest(request: Request) {
 }
 
 async function addNewRedirect(request: Request) {
-  const pathBlacklist = [
-    "/",
-    "/add",
-    "/success",
-    ""
-  ] 
+  const { prefixedUrl, key, expiration } = getParameters(request);
 
-  const { searchParams: params } = new URL(request.url);
-  const { key, url, expiration } = Object.fromEntries(params);
-  url.replace("http://", "https://");
-  const prefixedUrl = url.indexOf("https://") !== 0
-    ? "https://" + url
-    : url;
-  console.log(prefixedUrl);
   if (!key || !prefixedUrl) return new Response(null, {status: 400, statusText: "Missing Key or URL"});
-
-  if (pathBlacklist.includes(key)) {
-    return new Response(null, {status: 400, statusText: "Path Reserved"});
-  }
   
   const entry = await getFromKV(key);
   if (entry != null) {
-    return new Response(null, {status: 409, statusText: "Duplicate Key"});
+    return redirectFrontendError(request, "This key is already taken please choose another.");
   }
   const config = {
     expiration,
@@ -72,6 +56,10 @@ async function getFromKV(key: string) {
   return await REDIRECTS.get(key);
 }
 
+function redirectFrontendError(request: Request, text: string): Response {
+  const { urlWithoutProto, key } = getParameters(request);
+  return Response.redirect(`${getOrigin(request)}?error=${text}&url=${urlWithoutProto.replace("https://", "")}&key=${key}`);
+}
 
 function getOrigin(request: Request) {
   const url = new URL(request.url);
@@ -82,6 +70,18 @@ function getPath(request: Request) {
   const url = new URL(request.url);
 
   return url.pathname;
+}
+
+function getParameters(request: Request) {
+  const { searchParams: params } = new URL(request.url);
+  const { key, url, expiration } = Object.fromEntries(params);
+
+  const urlWithoutProto = url.replace(/https?:\/\//, "");
+  const prefixedUrl = "https://" + url;
+
+  return {
+    key, urlWithoutProto, prefixedUrl, expiration
+  }
 }
 
 async function getPage(pageName: string): Promise<Response> {
