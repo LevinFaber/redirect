@@ -11,11 +11,12 @@
     <section>
       <header>
         <h1>🔥 Create Redirect</h1>
+      </header>
         <form action="https://redirect.levin.pw/add">
           <div class="form-group path">
             <label for="key">Path</label>
             <div class="input">
-              <span class="domain-placeholder" data-for="key">https://redirect.levin.pw/r/</span><input required type="text" name="key">
+              <span class="domain-placeholder" data-for="key">https://redirect.levin.pw/r/</span><input required autocapitalize="off" type="text" name="key">
             </div>
           </div>
           <div class="arrow-element">
@@ -25,13 +26,12 @@
             <label for="url">URL</label>
             <div class="input">
               <span class="domain-placeholder" data-for="url">https://</span>
-              <input required type="text" name="url"  pattern="(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)">
+              <input required autocapitalize="off" type="text" name="url" pattern="(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*)">
             </div>
           </div>
           <div class="action-container">
             <button type="submit">Create Redirect</button>
           </div>
-        </header>
         </form>
     </section>
   </main>
