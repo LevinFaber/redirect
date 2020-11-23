@@ -19,3 +19,4 @@ jobs:
             npm run static:build
             wrangler kv:key put --binding=STATIC "index.html" public/index.html --path
             wrangler kv:key put --binding=STATIC "success.html" public/success.html --path
+            wrangler kv:key put --binding=STATIC "missing.html" public/missing.html --path

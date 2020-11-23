@@ -10,8 +10,8 @@
     "test:clean": "rimraf ./transpiled/src ./transpiled/test",
     "test": "npm run test:clean && npm run transpile && mocha --require source-map-support/register --recursive transpiled/test",
     "transpile": "tsc --project ./test",
-    "static:build": "parcel build ./static/index.html ./static/success.html -d public --no-source-maps",
-    "static:dev": "parcel ./static/index.html ./static/success.html"
+    "static:build": "parcel build ./static/*.html -d public --no-source-maps",
+    "static:dev": "parcel ./static/*.html"
   },
   "author": "author",
   "license": "MIT OR Apache-2.0",
@@ -23,6 +23,7 @@
     "sass": "^1.29.0"
   },
   "devDependencies": {
+    "@cloudflare/kv-asset-handler": "0.0.12",
     "@cloudflare/workers-types": "^2.0.0",
     "@types/chai": "^4.2.11",
     "@types/mocha": "^7.0.2",

@@ -1,18 +1,16 @@
-export async function handleRequest(request: Request) {
-  let res = null;
+import { getAssetFromKV, mapRequestToAsset, Options } from '@cloudflare/kv-asset-handler'
+export async function handleRequest(event: FetchEvent): Promise<Response> {
+  const request = event.request;
   const path = getPath(request);
-  if (path === "/") return await getPage("index");
-  if (path === "/success") return await getPage("success");
-  if (path === "/favicon.ico") return new Response();
-  if (path === "/add") {
-    res = await addNewRedirect(request)
-  } else if (path.indexOf("/r/") === 0) {
-    res = await executeRedirect(request);
+
+  if (path.indexOf("/r/") === 0) {
+    return await executeRedirect(request);
   }
+  if (path === "/add") {
+    return await addNewRedirect(request)
+  } 
 
-  if (res != null) return res;
-
-  return new Response(null, { status: 404 })
+  return await getAsset(event);
 }
 
 async function addNewRedirect(request: Request) {
@@ -50,6 +48,7 @@ async function executeRedirect(request: Request) {
   if (entry) {
     return Response.redirect(entry, 301);
   }
+  return getPage("missing");
 }
 
 async function getFromKV(key: string) {
@@ -93,3 +92,19 @@ async function getPage(pageName: string): Promise<Response> {
     ]
   ]});
 } 
+
+async function getAsset(event: FetchEvent): Promise<Response> {
+  const options: Partial<Options> = {
+    ASSET_NAMESPACE: STATIC,
+    ASSET_MANIFEST: JSON.stringify({
+      "success": "success.html",
+      "missing": "missing.html"
+    }),
+    defaultMimeType: "text/html"
+  }
+  try {
+    return await getAssetFromKV(event, options);
+  } catch {
+    return new Response(null, {status: 404});
+  }
+}
