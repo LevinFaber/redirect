@@ -1,4 +1,11 @@
-import { getAssetFromKV, mapRequestToAsset, Options } from '@cloudflare/kv-asset-handler'
+const STATIC_ROUTES: { [key: string]: string; } = {
+  "/": "index.html",
+  "/success": "success.html",
+  "/missing": "missing.html",
+  "/404": "404.html"
+}
+
+
 export async function handleRequest(event: FetchEvent): Promise<Response> {
   const request = event.request;
   const path = getPath(request);
@@ -9,8 +16,9 @@ export async function handleRequest(event: FetchEvent): Promise<Response> {
   if (path === "/add") {
     return await addNewRedirect(request)
   } 
+  if (STATIC_ROUTES[path] != null) return await getPage(STATIC_ROUTES[path]);
 
-  return await getAsset(event);
+  return await getPage(STATIC_ROUTES["404"]);
 }
 
 async function addNewRedirect(request: Request) {
@@ -83,8 +91,8 @@ function getParameters(request: Request) {
   }
 }
 
-async function getPage(pageName: string): Promise<Response> {
-  const html = await STATIC.get(`${pageName}.html`);
+async function getPage(fileName: string): Promise<Response> {
+  const html = await STATIC.get(`${fileName}`);
   return new Response(html, {status: 200, headers: [
     [
       'Content-Type',
@@ -92,19 +100,3 @@ async function getPage(pageName: string): Promise<Response> {
     ]
   ]});
 } 
-
-async function getAsset(event: FetchEvent): Promise<Response> {
-  const options: Partial<Options> = {
-    ASSET_NAMESPACE: STATIC,
-    ASSET_MANIFEST: JSON.stringify({
-      "success": "success.html",
-      "missing": "missing.html"
-    }),
-    defaultMimeType: "text/html"
-  }
-  try {
-    return await getAssetFromKV(event, options);
-  } catch {
-    return new Response(null, {status: 404});
-  }
-}
